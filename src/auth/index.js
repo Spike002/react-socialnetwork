@@ -1,7 +1,7 @@
 
 export const signUp = (user) => {
     return (
-      fetch("http://localhost:8080/signup", {
+      fetch(`${process.env.REACT_APP_API_URL}/signup`, {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -17,7 +17,7 @@ export const signUp = (user) => {
 
 export const signIn = (user) => {
   return (
-    fetch("http://localhost:8080/signin", {
+    fetch(`${process.env.REACT_APP_API_URL}/signin`, {
       method: "POST",
       headers: {
         Accept: "application/json",

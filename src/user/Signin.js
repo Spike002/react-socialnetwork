@@ -52,8 +52,6 @@ class Signin extends Component{
     })
   }
 
-
-
   signInForm = ({email, password}) => {
     return (
       <form>
