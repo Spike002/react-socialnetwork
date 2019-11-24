@@ -67,3 +67,51 @@ export const updateUserMenu = (user, next) => {
       }
     }
 }
+
+export const follow = ( userId, token, followId ) => {
+  return(
+    fetch(`${process.env.REACT_APP_API_URL}/user/follow`, {
+      method: "PUT",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({userId, followId})
+      }).then (response => {
+      return response.json()
+    }).catch(error => console.log(error))
+  )
+}
+
+
+export const unfollow = ( userId, token, unfollowId ) => {
+  return(
+    fetch(`${process.env.REACT_APP_API_URL}/user/unfollow`, {
+      method: "PUT",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({userId, unfollowId})
+      }).then (response => {
+      return response.json()
+    }).catch(error => console.log(error))
+  )
+}
+
+export const findPeople = (userId, token) => {
+  return(
+    fetch(`${process.env.REACT_APP_API_URL}/user/findpeople/${userId}`, {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        }
+      }).then (response => {
+      return response.json()
+    }).catch(error => console.log(error))
+  )
+}

@@ -5,14 +5,18 @@ import {Link, Redirect} from 'react-router-dom';
 import DefaultProfile from '../images/user-avatar.jpg'
 import DeleteUser from './DeleteUser'
 import FollowProfileButton from './FollowProfileButton'
+import ProfileTabs from './ProfileTabs'
+import {postByUser} from '../post/apiPost'
 
 class Profile extends Component {
   constructor(){
     super();
     this.state={
-      user: {following: [], follower:[]},
+      user: {following: [], followers:[]},
       redirectToSignin: false,
-      following: false
+      following: false,
+      error:'',
+      posts: []
     }
   }
 
@@ -25,6 +29,20 @@ class Profile extends Component {
     return match
   }
 
+  clickFollowButton = callApi => {
+    const userId = isAuthenticated().user._id;
+    const token = isAuthenticated().token;
+
+    callApi(userId, token, this.state.user._id)
+    .then(data => {
+      if(data.error){
+        this.setState({error: data.error})
+      } else {
+        this.setState({user: data, following: !this.state.following})
+      }
+    })
+  }
+
   init = (userId) => {
     const token = isAuthenticated().token;
     read(userId, token ).then(data => {
@@ -33,10 +51,21 @@ class Profile extends Component {
       }else{
         let following = this.checkFollow(data)
         this.setState({user: data, following})
+        this.loadPosts(data._id)
       }
     }).catch(error => console.log(error))
   }
 
+  loadPosts = (userId) => {
+    const token = isAuthenticated().token;
+    postByUser(userId, token).then(data => {
+      if(data.error){
+        console.log(data.error);
+      } else {
+        this.setState({posts: data})
+      }
+    })
+  }
 
   componentDidMount() {
     const userId = this.props.match.params.userId;
@@ -82,20 +111,40 @@ class Profile extends Component {
             { isAuthenticated().user && isAuthenticated().user._id == this.state.user._id ? (
               <div className="d-inline-block mt-5">
 
-                <Link className="btn btn-raised btn-success mr-5" to={`/user/edit/${this.state.user._id}`}>
-                Edit Profile
+                <Link className="btn btn-raised btn-info mr-5"
+                      to={`/post/create`}>
+                      Create Post
                 </Link>
+
+                <Link className="btn btn-raised btn-success mr-5"
+                      to={`/user/edit/${this.state.user._id}`}>
+                      Edit Profile
+                </Link>
+
                 <DeleteUser userId={this.state.user._id}/>
               </div>
-            ) : ( <FollowProfileButton following={this.state.following}/>)}
+            ) : ( <FollowProfileButton
+                  following={this.state.following}
+                  onButtonClick={this.clickFollowButton}
+                  />
+                )}
+
+
           </div>
         </div>
 
         <div className="row">
           <div className="col-md-12">
-            <p>Summary:</p>
+            <hr/>
             <p>{user.about}</p>
-            </div>
+            <hr />
+
+            <ProfileTabs
+              followers={this.state.user.followers}
+              following={this.state.user.following}
+              posts = { this.state.posts}
+            />
+          </div>
         </div>
 
       </div>
