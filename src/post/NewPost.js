@@ -32,10 +32,11 @@ class NewPost extends Component {
       this.setState({error: "File size should be less than 100kb", loading: false})
       return false
     }
-    if(title.length == 0 || body.length == 0 ){
-      this.setState({error: "All fields are required", loading: false})
+    if(title.length < 4 || body.length < 4 ){
+      this.setState({error: "All fields need at least 4 characters", loading: false})
       return false
     }
+    
     return true;
   }
 
@@ -135,7 +136,7 @@ class NewPost extends Component {
                   <div className="jumbotron text-center">
                       <h2>Loading...</h2>
                     </div> ) : ( "" )}
-          
+
           {this.newPostForm(title, body)}
       </div>
     )
